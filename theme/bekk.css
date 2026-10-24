@@ -1,0 +1,62 @@
+/* @theme bekk */
+
+@import-theme "highlight";
+
+section {
+  box-sizing: border-box;
+  width: 1280px;
+  height: 720px;
+  padding: 70px 80px;
+  background: #F8F8F8;
+  color: #1F1F1F;
+  font-family: "GT America", sans-serif;
+  font-size: 32px;
+  line-height: 1.4;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+  margin: 0;
+}
+
+section.invert {
+  background: #1F1F1F;
+  color: #F8F8F8;
+}
+
+section.title {
+  padding-top: 300px;
+}
+
+section.divider {
+  padding-top: 300px;
+  text-align: center;
+}
+
+header {
+  position: absolute;
+  top: 36px;
+  left: 64px;
+  right: 64px;
+  height: 56px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  font-size: 24px;
+  line-height: 1;
+}
+
+header img {
+  height: 56px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+header > :nth-child(2) {
+  justify-self: center;
+}
+
+header > :nth-child(3) {
+  justify-self: end;
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cache-components",
+  "private": true,
+  "scripts": {
+    "build": "marp presentation.md --theme-set theme/bekk.css theme/highlight.css --html --pdf --allow-local-files --output presentation.pdf && open presentation.pdf"
+  },
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.5.1"
+  }
+}
