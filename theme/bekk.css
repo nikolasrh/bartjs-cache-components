@@ -7,11 +7,11 @@ section {
   width: 1280px;
   height: 720px;
   padding: 70px 80px;
-  background: #F8F8F8;
-  color: #1F1F1F;
+  background: #1F1F1F;
+  color: #F8F8F8;
   font-family: "GT America", sans-serif;
   font-size: 32px;
-  line-height: 1.4;
+  line-height: 2;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -19,9 +19,13 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+ul, ol {
+  margin: 0;
+}
+
 section.invert {
-  background: #1F1F1F;
-  color: #F8F8F8;
+  background: #F8F8F8;
+  color: #1F1F1F;
 }
 
 section.title {
@@ -31,6 +35,24 @@ section.title {
 section.divider {
   padding-top: 300px;
   text-align: center;
+}
+
+section.divider.left {
+  text-align: left;
+}
+
+section.code {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  padding-left: 200px;
+}
+
+section.center {
+  display: grid;
+  place-content: center;
+  height: 100%;
 }
 
 header {
