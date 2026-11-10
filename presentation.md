@@ -165,7 +165,7 @@ const nextConfig: NextConfig = {
 
 # Min egen reise
 
-* Seint på Next-toget
+* Sent på Next-toget
 * Cache Components fra starten
 * Mye dynamisk innhold
   - Ikke like stor gevinst
@@ -1006,7 +1006,7 @@ async function getData(): Data {
 # cacheLife
 
 <style scoped>
-section {
+section table {
     font-size: 16px;
 }
 </style>
@@ -1047,6 +1047,7 @@ async function updateData() {
 
 # revalidatePath
 
+- revalidatePath("/profile")
 - Ikke stol på noen cache når du rendrer denne siden
 - Kan føre til at annen cache blir oppdatert
 
@@ -1065,25 +1066,139 @@ async function updateData() {
 
 # Men hvordan caches det?
 
-- cacheHandler (ISR)
-- cacheHandlers
-- Får bare in-memory
-  - "use cache"
-  - "use cache: private"
-- Kan spesifisere flere cacheHandlers
-  - "use cache: remote"
+* SSG/ISR – In-memory og disk
+* "use cache" – In-memory
+* "use cache: remote" – In-memory
+  - Må ha en implementasjon
+  - Fallback på in-memory
+* "use cache: private" – Nettleser
+  - For requesten
+  - Ekskludert fra SSG/ISR
+
+<!--
+Static site generation
+Incremental static regeneration
+Alt blir jo på en måte cacha i nettleseren. (stale, revalidate, expire)
+
+Alt cached i nettleseren via .
+De to første caches også 
+
+Mye in-memory. Flere instanser?
+-->
 
 ---
+
+<style scoped>
+section {
+    font-size: 20px;
+}
+</style>
+
+```ts
+const nextConfig: NextConfig = {
+  cacheComponents: true,
+
+  // SSG / ISR
+  cacheHandler: require.resolve("./cache-handlers/isr.js"),
+  cacheMaxMemorySize: 0,
+
+  // Cache Components
+  cacheHandlers: {
+    default: require.resolve("./cache-handlers/memory.js"),
+    remote: require.resolve("./cache-handlers/redis.js"),
+    // private ❌
+  },
+};
+```
+
+---
+
+<style scoped>
+section {
+    font-size: 20px;
+}
+</style>
+
+
+```ts
+const nextConfig: NextConfig = {
+  cacheComponents: true,
+  cacheHandlers: {
+    custom: require.resolve("./cache-handlers/custom.js"),
+  },
+};
+```
+
+```ts
+async function getData() {
+  "use cache: custom";
+  // ...
+}
+```
+
+<!-- remote1, remote2 osv. -->
+
+---
+
+<style scoped>
+section ul {
+    font-size: 24px;
+}
+</style>
+
+# Cache handlers
+
+- Self-hosted kommer bare med in-memory
+* Lag ditt eget eventyr
+  - github.com/vercel/next.js/tree/canary/examples/cache-handler-redis
+  - github.com/mrjasonroy/cache-components-cache-handler
+* Les mer
+  - nextjs.org/docs/app/getting-started/caching
+  - nextjs.org/docs/app/api-reference/directives/use-cache-remote
+  - nextjs.org/docs/app/api-reference/config/next-config-js/cacheHandlers
+
+<!--
+js-fil man ikke bygger med importerer runtime
+
+Bommer alltid på build
+
+- nextjs.org/docs/app/getting-started/caching
+- nextjs.org/docs/app/api-reference/directives/use-cache-remote
+- nextjs.org/docs/app/api-reference/config/next-config-js/cacheHandlers
+-->
+
+---
+
+# Recap
+
+- cacheHandler → SSG/ISR
+- cacheHandlers → Cache Components
+  * default
+  * remote
+  * private
+- Kun in-memory for self-hosted
+
+---
+ 
+<!-- _class: divider -->
+
+# E cache components nais?
+
+
+---
+
 
 <!-- _class: divider -->
 
-# «E cache components nais?»
-
-<!-- Vet ikke helt hva jeg skal svare -->
-
----
+# ???
 
 
+<!--
+Vet ikke helt hva jeg skal svare.
+Gir ikke mening å se på det i isolasjon.
+Cache-strategien din er på en måte ikke cache components.
+Det er sånn du kobler cachen din på Next.js for PPR, SSG og ISR.
+-->
 
 ---
 
@@ -1101,80 +1216,42 @@ SSR
 
 ---
 
+# Nice?
+
+- PPR, SSG og ISR
+  * Promise/Suspense på en måte elegant
+  * En del gotchas og fortsatt litt magisk 🪄
+    * "use cache" på build
+* cacheHandlers
+  * Naming things
+  * Remote first-class citizen ⁇
 
 
-Feedback
-
-QR
-1-5 Hvor nyttig var del 1
-1-5 Overall
-Tilbakemelding
-
----
-
-Er 
-
-Er Next nice?
-Fordi hvis du ikke vil ha cache components bør du bytte rammeverk.
-Cache Components som muliggjør ISR?
-
-Partial pre-rendering er fett
-Mest sannsynlig jeg og det jeg jobber på overlevd uten
-
-Cache API og Next-magi
-- Kult
-- With great powers... (se for deg spaghetti-cachinga)
-- Lock-in osv.
-
-Cache handlers:
-- Noe uforløst over over in-memory
-- Skulle gjerne hatt remote impl. som first class citizen
-- Private er kult I guess
+<!--
+Tre ting som er vanskelig her i verden:
+- cache invalidation
+- naming things
+- off-by-one errors
+-->
 
 ---
 
-<!-- - `cookies()`
-- `headers()`
-- `params`
-- `searchParams` -->
+<!-- _class: divider -->
 
-`cookies()`, `headers()`, `params`, or `searchParams` accessed outside of `<Suspense>` prevents the route from being prerendered, blocking the page load and leading to a slower user experience.
+# Unice?
 
----
+<!--
+Ikke liker PPR med SSG og ISR?
+Alergisk mot cache directive?
+Kanskje bytte til et annet rammeverk.
 
-- `.next/server/app/velkommen.html`
+Spørsmålet blir heller – har du tenkt å bruke Next?
+Så er svaret: Her har du Cache Components.
 
-Må gi et eksempel på dynamic verdi **placeholder**
-
----
-
-Se på output hva hver page blir
+-->
 
 ---
 
-# Cache directives
+# Tilbakemelding
 
-- "use cache"
-- "use cache: remote"
-- "use cache: private"
 
-Self hosted?
-
-- nextjs.org/docs/app/getting-started/caching
-- nextjs.org/docs/app/api-reference/directives/use-cache-remote
-- nextjs.org/docs/app/api-reference/config/next-config-js/cacheHandlers
-- github.com/vercel/next.js/tree/canary/examples/cache-handler-redis
-- github.com/mrjasonroy/cache-components-cache-handler
-
----
-
-Nice – nå er masse cached
-Problem – nå er masse cached
-
-Hvordan invalidere osv.
-
----
-
-"use cache"-funksjoner må være async
-
----
